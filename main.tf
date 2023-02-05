@@ -55,7 +55,7 @@ data "aws_ami" "latest_amazon_linux" {
     values = ["amzn2-ami-hvm-*-x86_64-gp2"]
   }
 }
-resource "aws_instance" "my_amazon" {
+resource "aws_instance" "assign1_ec2" {
   ami                         = aws_ami.latest_amazon_linux.id
   instance_type               = var.instance_type
   key_name                    = aws_key_pair.my_key.key_name
@@ -72,5 +72,53 @@ resource "aws_instance" "my_amazon" {
   )
   lifecycle {
     create_before_destroy = true
+  }
+}
+# Security Group
+resource "aws_security_group" "assign1_web_sg" {
+  name        = "allow_http_ssh"
+  description = "Allow HTTP and SSH inbound traffic"
+  vpc_id      = aws_vpc.assign1_vpc
+  tags = merge(
+    var.default_tags,
+    {
+      Name = "${var.prefix}-sg"
+    },
+  )   ingress {
+    description      = "HTTP from everywhere"
+    from_port        = 8081
+    to_port          = 8081
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }   ingress {
+    description      = "HTTP from everywhere"
+    from_port        = 8082
+    to_port          = 8082
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  } 
+  ingress {
+    description      = "HTTP from everywhere"
+    from_port        = 8083
+    to_port          = 8083
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  } 
+  ingress {
+    description      = "SSH from everywhere"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }   egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
