@@ -19,3 +19,8 @@ variable "vpc_cidr" {
   type        = string
   description = "Public Subnet CIDR"
 }
+variable "public_subnet_cidr" {
+  default     = "10.32.0.0/24"
+  type        = string
+  description = "Public Subnet CIDR"
+}

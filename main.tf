@@ -7,7 +7,7 @@ data "aws_availability_zones" "available" {
   state = "available"
   
 } # Create a new VPC 
-resource "aws_vpc" "my_vpc" {
+resource "aws_vpc" "assign1_vpc" {
   cidr_block       = var.vpc_cidr
   instance_tenancy = "default"
   tags = merge(
@@ -16,4 +16,20 @@ resource "aws_vpc" "my_vpc" {
       Name = "${var.prefix}-vpc"
     },
   )
+}
+
+# Add provisioning of the public subnet1 in the custom VPC
+resource "aws_subnet" "public_subnet1" {
+  vpc_id            = aws_vpc.assign1_vpc.id
+  cidr_block        = var.public_subnet_cidr
+  availability_zone = data.aws_availability_zones.available.names[0]
+  tags = merge(
+    var.default_tags,
+    {
+      Name = "${var.prefix}-subnet1"
+    },
+  )
+} # Create Internet Gateway
+resource "aws_internet_gateway" "assign1_igw" {
+  vpc_id = aws_vpc.main.id
 }
