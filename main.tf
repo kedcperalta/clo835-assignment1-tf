@@ -46,3 +46,31 @@ resource "aws_route_table_association" "public_route_table_association-1" {
   route_table_id = aws_route_table.public_route_table.id
   subnet_id      = aws_subnet.public_subnet_cidr.id
 }
+# Data source for AMI id
+data "aws_ami" "latest_amazon_linux" {
+  owners      = ["amazon"]
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+resource "aws_instance" "my_amazon" {
+  ami                         = aws_ami.latest_amazon_linux.id
+  instance_type               = var.instance_type
+  key_name                    = aws_key_pair.my_key.key_name
+  subnet_id                   = aws_subnet.public_subnet1
+  security_groups             = [aws_security_group.web_sg.id]
+  associate_public_ip_address = true
+  iam_instance_profile        = "LabInstanceProfile"
+  user_data                   = file("${path.module}/preparexdocker.sh")
+  tags = merge(
+    var.default_tags,
+    {
+      Name = "${var.prefix}-ec2"
+    },
+  )
+  lifecycle {
+    create_before_destroy = true
+  }
+}

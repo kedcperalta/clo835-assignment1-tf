@@ -24,3 +24,7 @@ variable "public_subnet_cidr" {
   type        = string
   description = "Public Subnet CIDR"
 }
+variable "instance_type" {
+    default  =  t2.micro
+    description = "ec2 instance size" 
+}
