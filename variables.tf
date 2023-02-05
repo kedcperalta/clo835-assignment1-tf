@@ -1,10 +1,10 @@
 # Default tags
 variable "default_tags" {
   default = {
-    "Owner" = "Kristoffer"
-    "App"   = "Assignment-1"
+    "Owner" = "Kristoffer"
+    "App" = "Assignment-1"
   }
-  type        = map(any)
+  type     = map(any)
   description = "Default tags to be appliad to all AWS resources"
 }
   
